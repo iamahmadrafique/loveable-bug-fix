@@ -18,7 +18,7 @@ This document summarizes the key bugs discovered, fixes applied, and implementat
 Submitting the lead capture form resulted in a 500 Internal Server Error from the Supabase Edge Function. This prevented confirmation emails from being sent and blocked user onboarding.
 
 #### Root Cause
-- The Edge Function was missing required environment variables (`RESEND_PUBLIC_KEY`, `OPENAI_API_KEY`) or had incorrect API response handling.
+- The Edge Function was missing required environment variables (`RESEND_API_KEY`, `OPENAI_API_KEY`) or had incorrect API response handling.
 - The OpenAI API response was accessed at `choices[1]` instead of `choices[0]`, causing undefined content and email failures.
 - Error handling did not always return a valid response, leading to unhelpful error messages.
 
@@ -42,14 +42,14 @@ Submitting the lead capture form resulted in a 500 Internal Server Error from th
 **Status**: ✅ Fixed
 
 #### Problem
-The frontend previously called the `send-confirmation` function twice on form submission, resulting in duplicate emails being sent to users.
+The frontend previously called the `send-confirmation` function twice on form submission instead of first saving lead, resulting in duplicate emails being sent to users.
 
 #### Root Cause
 Redundant code blocks in the `handleSubmit` handler.
 
 #### Fix
 - Removed duplicate function calls.
-- Ensured the confirmation email is sent only once per submission.
+- Ensured saving lead and then confirmation email is sent only once per submission.
 
 #### Impact
 - ✅ Users receive only one confirmation email per submission.
@@ -64,8 +64,8 @@ Redundant code blocks in the `handleSubmit` handler.
 **Status**: ✅ Confirmed
 
 #### Note
-- The current implementation does **not** save leads to the Supabase database. All lead data is managed in local React state.
-- If database persistence is required, add a call to `supabase.from('leads').insert([...])` in the frontend or backend.
+- The current implementation did **not** save leads to the Supabase database. All lead data is managed in local React state.
+- If database persistence done, by adding a call to `supabase.from('leads').insert([...])`
 
 ---
 
@@ -93,7 +93,7 @@ Users were not informed of backend errors in a clear way.
 |---------------------|----------|-----------------------------------------------------------------------|
 | Supabase function   | ✅ OK    | Corrected, robust error handling, proper API usage                    |
 | Network calls       | ✅ OK    | No duplicates, error handling present                                 |
-| Database schema     | ✅ OK    | Not saving to DB, so no schema issues                                 |
+| Database schema     | ✅ OK    | Saving to DB now, no schema issues                                    |
 | Error handling      | ✅ OK    | User-friendly error messages shown                                    |
 | Code structure      | ✅ OK    | Clean, no unnecessary code                                            |
 
