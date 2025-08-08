@@ -28,6 +28,32 @@ export const LeadCaptureForm = () => {
     setValidationErrors(errors);
 
     if (errors.length === 0) {
+      try {
+        let session = localStorage.getItem('lead_id');
+        
+        if (!session) {
+          //Assign a random session Id
+          session = crypto.randomUUID();
+          localStorage.setItem('lead_id', session);
+        }
+
+        const { data: insertData, error: insertError } = await supabase
+          .from('leads')
+          .insert({name: formData.name, email: formData.email, industry: formData.industry, session_id: session,})
+          .select().single();
+
+        if (insertError) {
+          setValidationErrors([{ field: 'email', message: 'Details were not saved. Please try again.' }]);
+          return;
+        }
+
+        setLeads([...leads, { ...insertData }]);
+
+      } catch (dbError) {
+        setValidationErrors([{ field: 'email', message: 'Unexpected Error. Please try again.' }]);
+        return;
+      }
+
       // Send confirmation email (only once)
       try {
         const { error: emailError } = await supabase.functions.invoke('send-confirmation', {

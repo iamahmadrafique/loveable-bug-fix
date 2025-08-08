@@ -2,11 +2,11 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resendApiKey = Deno.env.get("RESEND_PUBLIC_KEY");
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
 const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
 
 if (!resendApiKey || !openaiApiKey) {
-  throw new Error("Missing required environment variables: RESEND_PUBLIC_KEY or OPENAI_API_KEY");
+  throw new Error("Missing required environment variables: RESEND_API_KEY or OPENAI_API_KEY");
 }
 
 const resend = new Resend(resendApiKey);
