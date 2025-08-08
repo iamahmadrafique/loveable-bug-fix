@@ -101,7 +101,6 @@ Users were not informed of backend errors in a clear way.
 
 ## Next Steps
 
-- If backend/database persistence is needed, implement Supabase `.from('leads').insert(...)` logic.
 - For further debugging, always check Supabase Edge Function logs for errors.
 - Ensure all environment variables are set in the Supabase dashboard before deployment.
 
